@@ -667,12 +667,20 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycbwRCIIMpA_LRRUEd1BGSTI2FH
 // Convert entries array to 2D array for Sheets
 function entriesToRows(arr) {
   return arr.map(function(e) {
-    return [e.id, e.desc, e.amount, e.category, e.date, e.type, e.fixed ? '1' : '0'];
+    return [e.id, e.desc, e.date, e.amount, e.category, e.type, e.fixed ? '1' : '0'];
   });
 }
 function rowsToEntries(rows) {
   return rows.filter(function(r){ return r[0]; }).map(function(r) {
-    return { id:String(r[0]), desc:String(r[1]), amount:parseFloat(r[2]), category:String(r[3]), date:String(r[4]), type:String(r[5]), fixed: r[6]==='1'||r[6]===true||r[6]===1 };
+    // Sheets returns dates as Date objects or ISO strings with timezone — extract YYYY-MM-DD
+    var rawDate = r[2];
+    var dateStr;
+    if (rawDate instanceof Date) {
+      dateStr = rawDate.getFullYear() + '-' + String(rawDate.getMonth()+1).padStart(2,'0') + '-' + String(rawDate.getDate()).padStart(2,'0');
+    } else {
+      dateStr = String(rawDate).substring(0, 10);
+    }
+    return { id:String(r[0]), desc:String(r[1]), date:dateStr, amount:parseFloat(r[3]), category:String(r[4]), type:String(r[5]), fixed: r[6]==='1'||r[6]===true||r[6]===1 };
   });
 }
 function installsToRows(arr) {
