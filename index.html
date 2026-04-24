@@ -697,40 +697,56 @@ function showSyncStatus(msg, ok) {
 
 var saveE = function() {
   localStorage.setItem('flux_entries', JSON.stringify(entries));
-  fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'saveEntries', data: entriesToRows(entries) }) })
+  fetch(GAS_URL, { method:'POST', mode:'cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'saveEntries', data: entriesToRows(entries) }) })
     .then(function(){ showSyncStatus('✓ sincronizado', true); })
     .catch(function(){ showSyncStatus('⚠ erro ao sincronizar', false); });
 };
 var saveI = function() {
   localStorage.setItem('flux_installments', JSON.stringify(installments));
-  fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'saveInstallments', data: installsToRows(installments) }) })
+  fetch(GAS_URL, { method:'POST', mode:'cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'saveInstallments', data: installsToRows(installments) }) })
     .then(function(){ showSyncStatus('✓ sincronizado', true); })
     .catch(function(){ showSyncStatus('⚠ erro ao sincronizar', false); });
 };
 
 function loadFromSheets(callback) {
   showSyncStatus('↻ carregando...', true);
-  Promise.all([
-    fetch(GAS_URL + '?action=getEntries').then(function(r){ return r.json(); }),
-    fetch(GAS_URL + '?action=getInstallments').then(function(r){ return r.json(); })
-  ]).then(function(results) {
-    var remoteEntries = rowsToEntries(results[0]);
-    var remoteInstalls = rowsToInstalls(results[1]);
-    // ALWAYS use Sheets data if available — ignore local seed
-    if (remoteEntries.length > 0) {
-      entries = remoteEntries;
-      localStorage.setItem('flux_entries', JSON.stringify(entries));
-    }
-    if (remoteInstalls.length > 0) {
-      installments = remoteInstalls;
-      localStorage.setItem('flux_installments', JSON.stringify(installments));
-    }
-    showSyncStatus('✓ sincronizado com Sheets', true);
-    callback();
-  }).catch(function() {
-    showSyncStatus('⚠ offline — dados locais', false);
-    callback();
-  });
+  var entriesURL  = GAS_URL + '?action=getEntries';
+  var installsURL = GAS_URL + '?action=getInstallments';
+
+  function fetchGAS(url) {
+    return fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
+      mode: 'cors',
+      headers: { 'Content-Type': 'text/plain' }
+    }).then(function(r) {
+      return r.json();
+    });
+  }
+
+  Promise.all([fetchGAS(entriesURL), fetchGAS(installsURL)])
+    .then(function(results) {
+      var remoteEntries  = rowsToEntries(results[0]);
+      var remoteInstalls = rowsToInstalls(results[1]);
+      if (remoteEntries.length > 0) {
+        entries = remoteEntries;
+        localStorage.setItem('flux_entries', JSON.stringify(entries));
+      }
+      if (remoteInstalls.length > 0) {
+        installments = remoteInstalls;
+        localStorage.setItem('flux_installments', JSON.stringify(installments));
+      }
+      showSyncStatus('✓ sincronizado com Sheets', true);
+      callback();
+    }).catch(function(err) {
+      // fallback to localStorage if available
+      var local = localStorage.getItem('flux_entries');
+      if (local) entries = JSON.parse(local);
+      var localI = localStorage.getItem('flux_installments');
+      if (localI) installments = JSON.parse(localI);
+      showSyncStatus('⚠ offline — dados locais', false);
+      callback();
+    });
 }
 
 // ── THEME ─────────────────────────────────────────────────────────────────
