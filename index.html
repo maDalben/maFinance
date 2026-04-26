@@ -692,7 +692,18 @@ function installsToRows(arr) {
 }
 function rowsToInstalls(rows) {
   return rows.filter(function(r){ return r[0]; }).map(function(r) {
-    return { id:String(r[0]), desc:String(r[1]), amount:parseFloat(r[2]), category:String(r[3]), startDate:String(r[4]), curInstall:parseInt(r[5]), totalInstalls:parseInt(r[6]), firstYear:parseInt(r[7]), firstMonth:parseInt(r[8]) };
+    // Sheets column order from seedData: id, desc, amount, category, totalInstalls, curInstall, startDate, firstYear, firstMonth
+    return {
+      id:           String(r[0]),
+      desc:         String(r[1]),
+      amount:       parseFloat(r[2]),
+      category:     String(r[3]),
+      totalInstalls:parseInt(r[4]),
+      curInstall:   parseInt(r[5]),
+      startDate:    String(r[6]).substring(0,10),
+      firstYear:    parseInt(r[7]),
+      firstMonth:   parseInt(r[8])
+    };
   });
 }
 
