@@ -680,7 +680,9 @@ function rowsToEntries(rows) {
     } else {
       dateStr = String(rawDate).substring(0, 10);
     }
-    return { id:String(r[0]), desc:String(r[1]), date:dateStr, amount:parseFloat(r[3]), category:String(r[4]), type:String(r[5]), fixed: r[6]==='1'||r[6]===true||r[6]===1 };
+    var fixedVal = r[6];
+    var isFixed = fixedVal===true || fixedVal===1 || fixedVal==='1' || fixedVal==='true';
+    return { id:String(r[0]), desc:String(r[1]), date:dateStr, amount:parseFloat(r[3]), category:String(r[4]), type:String(r[5]), fixed: isFixed };
   });
 }
 function installsToRows(arr) {
@@ -736,6 +738,8 @@ function loadFromSheets(callback) {
     .then(function(results) {
       var remoteEntries  = rowsToEntries(results[0]);
       var remoteInstalls = rowsToInstalls(results[1]);
+      console.log('Raw install[0]:', JSON.stringify(results[1][0]));
+      console.log('Parsed install[0]:', JSON.stringify(remoteInstalls[0]));
       if (remoteEntries.length > 0) {
         entries = remoteEntries;
         localStorage.setItem('flux_entries', JSON.stringify(entries));
@@ -747,6 +751,7 @@ function loadFromSheets(callback) {
       showSyncStatus('✓ sincronizado com Sheets', true);
       callback();
     }).catch(function(err) {
+      console.error('Sheets load failed:', err, JSON.stringify(err, Object.getOwnPropertyNames(err)));
       // fallback to localStorage if available
       var local = localStorage.getItem('flux_entries');
       if (local) entries = JSON.parse(local);
