@@ -381,20 +381,118 @@ tbody td { padding: 13px 20px; font-size: .78rem; vertical-align: middle; }
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px) {
-  header { padding: 12px 16px; }
-  .tab-bar { padding: 0 12px; top: 57px; }
-  main { padding: 20px 12px 60px; }
-  .dash-hero { grid-template-columns: 1fr; }
-  .dash-grid { grid-template-columns: 1fr 1fr; }
-  .dash-two { grid-template-columns: 1fr; }
-  .cat-row { grid-template-columns: 80px 1fr 60px; }
+  /* Header compacto */
+  header { padding: 10px 16px; }
+  .logo { font-size: 1.1rem; }
+  #month-label { font-size: .85rem; }
+  #cycle-range { font-size: .55rem; }
+  .month-info { min-width: 140px; }
+  .month-nav button { width: 28px; height: 28px; font-size: .9rem; }
+  .theme-btn { width: 30px; height: 30px; font-size: .85rem; }
+
+  /* Tab bar oculto no mobile — substituído por bottom nav */
+  .tab-bar { display: none; }
+
+  /* Main sem padding bottom excessivo */
+  main { padding: 16px 12px 80px; }
+
+  /* Dashboard */
+  .dash-hero { grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
+  .hero-card { padding: 20px; }
+  .hero-value { font-size: 2rem; }
+  .hero-label { font-size: .58rem; margin-bottom: 8px; }
+  .hero-sub { font-size: .65rem; }
+
+  .dash-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card { padding: 14px 16px; }
+  .stat-icon { width: 28px; height: 28px; font-size: .8rem; margin-bottom: 8px; }
+  .stat-label { font-size: .55rem; }
+  .stat-value { font-size: 1.2rem; }
+  .stat-sub { font-size: .58rem; }
+
+  .dash-two { grid-template-columns: 1fr; gap: 12px; }
+  .cat-row { grid-template-columns: 80px 1fr 62px; gap: 8px; }
+  .cat-name { font-size: .68rem; }
+  .cat-amount { font-size: .66rem; }
+
+  /* Meta bars */
+  .meta-bar-wrap { padding: 16px 18px; }
+  .meta-title { font-size: .68rem; }
+  .meta-values { font-size: .65rem; }
+  .meta-hint { font-size: .62rem; }
+
+  /* Page headers */
+  .page-header { margin-bottom: 16px; }
+  .page-title { font-size: 1.2rem; }
+  .page-total { font-size: .65rem; }
+  .add-btn { padding: 7px 14px; font-size: .68rem; }
+
+  /* Tables */
   table thead th:nth-child(3), table tbody td:nth-child(3) { display: none; }
   .col-prog, .col-rest { display: none !important; }
-  .action-btn, .edit-btn { width: 36px; height: 36px; font-size: 1rem; }
-  .row-actions { gap: 6px; }
-  tbody td { padding: 12px 14px; }
-  thead th { padding: 10px 14px; }
-  .hero-value { font-size: 1.9rem; }
+  tbody td { padding: 11px 14px; font-size: .76rem; }
+  thead th { padding: 9px 14px; font-size: .58rem; }
+  .td-date { font-size: .65rem; }
+  .td-amt { font-size: .76rem; }
+
+  /* Action buttons — bigger touch targets */
+  .action-btn, .edit-btn { width: 38px; height: 38px; font-size: 1rem; }
+  .row-actions { gap: 4px; }
+
+  /* Modal full-screen on mobile */
+  .overlay { align-items: flex-end; }
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 28px 20px 36px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  .modal-title { font-size: 1.2rem; }
+  .field input, .field select { padding: 13px 14px; font-size: .85rem; }
+  .btn-cancel, .btn-save { padding: 13px; font-size: .8rem; }
+
+  /* Upcoming list */
+  .upcoming-item { padding: 11px 16px; }
+  .upcoming-desc { font-size: .73rem; }
+  .upcoming-date { font-size: .62rem; }
+  .upcoming-amt { font-size: .75rem; }
+}
+
+/* ── BOTTOM NAV (mobile only) ── */
+.bottom-nav {
+  display: none;
+}
+
+@media(max-width:700px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: color-mix(in srgb, var(--surface) 96%, transparent);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    z-index: 190;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  }
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    cursor: pointer;
+    transition: all .15s;
+    border: none;
+    background: none;
+    color: var(--muted);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bottom-nav-item.active { color: var(--lilac); }
+  .bottom-nav-item .nav-icon { font-size: 1.3rem; line-height: 1; }
+  .bottom-nav-item .nav-label { font-size: .58rem; font-weight: 600; letter-spacing: .04em; font-family: 'Inter', sans-serif; }
 }
 </style>
 </head>
@@ -602,6 +700,7 @@ tbody td { padding: 13px 20px; font-size: .78rem; vertical-align: middle; }
         <option value="Transporte">🚗 Transporte</option>
         <option value="Moradia">🏠 Moradia</option>
         <option value="Saude">💊 Saúde</option>
+        <option value="Beleza">💅 Beleza</option>
         <option value="Lazer">🎮 Lazer</option>
         <option value="Educacao">📚 Educação</option>
         <option value="Roupas">👕 Roupas</option>
@@ -643,7 +742,7 @@ var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
 
 var CAT_COLORS = {
   'Alimentacao':'#f0a060','Restaurantes':'#f97316','Transporte':'#60aef0','Moradia':'#a0d860',
-  'Saude':'#f06080','Lazer':'#9b7fe8','Educacao':'#60d0a0',
+  'Saude':'#f06080','Beleza':'#e879f9','Lazer':'#9b7fe8','Educacao':'#60d0a0',
   'Roupas':'#f0c840','Assinaturas':'#7ec8f0','Mercado':'#34c77b',
   'Contas':'#f59e42','Gatinhas':'#e879a0','Presentes':'#f9a8d4',
   'Salario':'#34c77b','Outros':'#9488b2'
@@ -831,11 +930,21 @@ function activeInstallments() {
 // ── NAV ───────────────────────────────────────────────────────────────────
 function showTab(name) {
   currentTab = name;
+  // Update top tab bar
   document.querySelectorAll('.tab').forEach(function(t,i){
     t.classList.toggle('active', ['dash','fixed','install','card','rest'][i] === name);
   });
+  // Update bottom nav
+  var tabs = ['dash','fixed','install','card','rest'];
+  tabs.forEach(function(tab) {
+    var el = document.getElementById('bn-' + tab);
+    if (el) el.classList.toggle('active', tab === name);
+  });
+  // Show panel
   document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById('panel-' + name).classList.add('active');
+  // Scroll to top
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 function changeMonth(dir) {
   curMonth += dir;
@@ -1193,8 +1302,10 @@ function openModalRest() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 (function(){
-  curYear  = 2026;
-  curMonth = 3; // Abril — ajusta automaticamente conforme navegação
+  // Abre sempre no mês atual
+  var now = new Date();
+  curYear  = now.getFullYear();
+  curMonth = now.getMonth();
 
   // Carrega do Sheets, sem seed local
   loadFromSheets(function() {
@@ -1209,5 +1320,29 @@ function openModalRest() {
   });
 })();
 </script>
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bottom-nav-item active" id="bn-dash" onclick="showTab('dash')">
+    <span class="nav-icon">✦</span>
+    <span class="nav-label">Início</span>
+  </button>
+  <button class="bottom-nav-item" id="bn-fixed" onclick="showTab('fixed')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Fixas</span>
+  </button>
+  <button class="bottom-nav-item" id="bn-install" onclick="showTab('install')">
+    <span class="nav-icon">📦</span>
+    <span class="nav-label">Parcelas</span>
+  </button>
+  <button class="bottom-nav-item" id="bn-card" onclick="showTab('card')">
+    <span class="nav-icon">💳</span>
+    <span class="nav-label">Cartão</span>
+  </button>
+  <button class="bottom-nav-item" id="bn-rest" onclick="showTab('rest')">
+    <span class="nav-icon">🍽️</span>
+    <span class="nav-label">Restaurantes</span>
+  </button>
+</nav>
+
 </body>
 </html>
